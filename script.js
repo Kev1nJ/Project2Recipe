@@ -1,0 +1,111 @@
+const ingredients = {
+    chicken: "Chicken",
+    beef: "Beef",
+    salmon: "Salmon",
+    shrimp: "Shrimp",
+    potatoes: "Potatoes",
+    rice: "Rice",
+    tomatoes: "Tomatoes",
+    peppers: "Peppers",
+    onion: "Onion",
+    lemon: "Lemon",
+    carrot: "Carrot",
+    broccoli: "Broccoli",
+    quinoa: "Quinoa",
+    tortillas: "Tortillas",
+    peas: "Peas",
+    noodles: "Noodles",
+    parmesan: "Parmesan",
+    breadcrumbs: "Breadcrumbs",
+    egg: "Egg",
+    pasta: "Pasta",
+  };
+
+  function populateIngredients() {
+    const ingredientsList = document.getElementById("ingredientsList");
+  
+    for (const ingredient in ingredients) {
+      const listItem = document.createElement("li");
+      listItem.textContent = ingredient;
+      listItem.addEventListener("click", () => addToFridge(ingredient));
+      ingredientsList.appendChild(listItem);
+    }
+  }
+  
+  function addToFridge(ingredient) {
+    if (!fridgeIngredients.includes(ingredient)) {
+      fridgeIngredients.push(ingredient);
+      const fridgeList = document.getElementById("fridgeList");
+      const listItem = document.createElement("li");
+      listItem.textContent = ingredient;
+      fridgeList.appendChild(listItem);
+    }
+  }
+
+  const recipes = [
+    {
+      name: "Grilled Chicken Breast with Veggies and Mashed Potatoes",
+      ingredients: ["Chicken", "Broccoli", "Onion", "Carrot", "Peppers", "Potatoes"]
+    },
+    {
+      name: "Baked Salmon with Steamed Broccoli and Quinoa",
+      ingredients: ["Salmon", "Broccoli", "Quinoa"]
+    },
+    {
+      name: "Beef Enchiladas with Red Sauce",
+      ingredients: ["Beef", "Onion", "Tomato"]
+    },
+    {
+      name: "Beef Stir Fry with Snow Peas and Noodles",
+      ingredients: ["Beef", "Onion", "Peppers", "Peas", "Noodles"]
+    },
+    {
+      name: "Chicken Parmesan",
+      ingredients: ["Chicken", "Breadcrumbs", "Tomato", "Pasta"]
+    },
+  ];
+
+  function searchRecipes() {
+    const selectedIngredients = Array.from(document.getElementById("ingredients").selectedOptions).map(option => option.value);
+
+    const matchingRecipes = recipes.filter(recipe =>
+      selectedIngredients.some(ingredient => recipe.ingredients.includes(ingredient))
+    );
+
+    const resultsContainer = document.getElementById("results");
+    resultsContainer.innerHTML = "";
+    
+    if (matchingRecipes.length === 0) {
+      resultsContainer.innerHTML = "<li>No recipes found with selected ingredients.</li>";
+    } else {
+      matchingRecipes.forEach(recipe => {
+        const recipeIngredients = recipe.ingredients.map(ingredient => ingredients[ingredient]).join(", ");
+        const listItem = document.createElement("li");
+        listItem.textContent = `${recipe.name}: ${recipeIngredients}`;
+        resultsContainer.appendChild(listItem);
+      });
+    }
+  }
+
+  //Spoonacular API
+
+  function getSource(id) {
+       $.ajax({
+           url: "https://api.spoonacular.com/recipes/" + id + "/information?apiKey=ada030f7a07b411c83ea10178938e8de",
+           succes: function (res) {
+               document.getElementById("sourceLink").innerHTML = res.sourceUrl
+               document.getElementById("sourceLink").href = res.sourceUrl
+           }
+       });
+   }
+
+   function getRecipe(q) {
+       $.ajax({
+           url: "https://api.spoonacular.com/recipes/search?apiKey=ada030f7a07b411c83ea10178938e8de&number=8&query" + q,
+           success: function (res) {
+               document.getElementById("output").innerHTML = "<h1>" + res.results[0].title + "</h1><br><img src='" + res.baseUri + res.results[0].image + "' width='400' /> <br> ready in " + res.results[0].readyInMinutes + " minutes"
+               getsource(res.results[0].id)
+           }
+       })
+   };
+
